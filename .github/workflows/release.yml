@@ -1,0 +1,266 @@
+name: Release ESO Addon ZIP
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    name: Build and publish release ZIP
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Determine version from tag
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          if (-not $tag.StartsWith("v")) {
+            throw "Tag must start with v, for example v1.1.1"
+          }
+
+          $version = $tag.Substring(1)
+          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "ZIP_NAME=DynamicEncounterTracker_$version.zip" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+          Write-Host "Tag: $tag"
+          Write-Host "Version: $version"
+
+      - name: Validate manifest version
+        shell: pwsh
+        run: |
+          $manifestPath = "DynamicEncounterTracker/DynamicEncounterTracker.txt"
+
+          if (-not (Test-Path $manifestPath)) {
+            throw "Manifest not found: $manifestPath"
+          }
+
+          $manifest = Get-Content $manifestPath -Encoding UTF8
+          $versionLine = $manifest | Where-Object { $_.StartsWith("## Version:") } | Select-Object -First 1
+
+          if (-not $versionLine) {
+            throw "Manifest does not contain a ## Version line."
+          }
+
+          $manifestVersion = ($versionLine -replace "^## Version:\s*", "").Trim()
+
+          if ($manifestVersion -ne $env:VERSION) {
+            throw "Manifest version '$manifestVersion' does not match tag version '$env:VERSION'."
+          }
+
+          if ($manifestVersion -notmatch '^(\d+)\.(\d+)\.(\d+)$') {
+            throw "Manifest version must use Major.Minor.Patch: $manifestVersion"
+          }
+
+          $major = [int]$Matches[1]
+          $minor = [int]$Matches[2]
+          $patch = [int]$Matches[3]
+          if ($minor -gt 99 -or $patch -gt 99) {
+            throw "Manifest minor and patch must each be between 0 and 99."
+          }
+
+          $expectedLines = @(
+            "## AddOnVersion: $(($major * 10000) + ($minor * 100) + $patch)",
+            "## APIVersion: 101050 101051",
+            "## Author: R0ctan",
+            "## Credits: AI-assisted development by Auralith AI",
+            "## DependsOn: LibAddonMenu-2.0>=43"
+          )
+
+          foreach ($expectedLine in $expectedLines) {
+            if (-not ($manifest -contains $expectedLine)) {
+              throw "Manifest does not contain expected line: $expectedLine"
+            }
+          }
+
+          Write-Host "Manifest version matches tag version: $manifestVersion"
+
+      - name: Validate package structure
+        shell: pwsh
+        run: |
+          $addonRoot = "DynamicEncounterTracker"
+          $manifestPath = "$addonRoot/DynamicEncounterTracker.txt"
+
+          if (-not (Test-Path $addonRoot)) {
+            throw "Addon folder missing: $addonRoot"
+          }
+
+          if (-not (Test-Path $manifestPath)) {
+            throw "Manifest missing: $manifestPath"
+          }
+
+          $forbiddenDirectoryNames = @(
+            ".git",
+            ".github",
+            ".vscode",
+            "tools",
+            "docs",
+            "release",
+            "SavedVariables",
+            "__MACOSX"
+          )
+
+          $directories = Get-ChildItem -Path $addonRoot -Recurse -Force -Directory
+          foreach ($directory in $directories) {
+            if ($forbiddenDirectoryNames -contains $directory.Name) {
+              throw "Forbidden directory inside addon folder: $($directory.FullName)"
+            }
+          }
+
+          $forbiddenFileNames = @("desktop.ini", "Thumbs.db", ".DS_Store")
+          $files = Get-ChildItem -Path $addonRoot -Recurse -Force -File
+          foreach ($file in $files) {
+            if ($forbiddenFileNames -contains $file.Name -or $file.Name -match '\.(bak|tmp|log)$') {
+              throw "Forbidden file inside addon folder: $($file.FullName)"
+            }
+          }
+
+          $manifest = Get-Content $manifestPath -Encoding UTF8
+          $referencedFiles = $manifest |
+            Where-Object {
+              $_ -and
+              -not $_.StartsWith("##") -and
+              -not $_.StartsWith("#") -and
+              $_.Trim().Length -gt 0
+            }
+
+          foreach ($file in $referencedFiles) {
+            if ($file -eq 'lang/$(language).lua') {
+              continue
+            }
+
+            $path = Join-Path $addonRoot ($file -replace "/", "\")
+            if (-not (Test-Path $path)) {
+              throw "Manifest references missing file: $file"
+            }
+          }
+
+          $normalizedReferences = @($referencedFiles | ForEach-Object { $_.Replace("\", "/") })
+          $loadableFiles = $files | Where-Object { $_.Extension -in @(".lua", ".xml") }
+          foreach ($file in $loadableFiles) {
+            $relativeFile = $file.FullName.Substring((Resolve-Path $addonRoot).Path.Length + 1).Replace("\", "/")
+            $coveredByLanguagePlaceholder =
+              $relativeFile -match '^lang/(de|es|fr|ru|zh)\.lua$' -and
+              $normalizedReferences -contains 'lang/$(language).lua'
+
+            if (-not $coveredByLanguagePlaceholder -and -not ($normalizedReferences -contains $relativeFile)) {
+              throw "Manifest does not reference loadable file: $relativeFile"
+            }
+          }
+
+          if ($manifest -contains 'lang/$(language).lua') {
+            if (-not (Test-Path "$addonRoot/lang/default.lua")) {
+              throw "Manifest uses lang/`$(language).lua but lang/default.lua is missing."
+            }
+
+            $defaultIndex = [array]::IndexOf($manifest, "lang/default.lua")
+            $localizedIndex = [array]::IndexOf($manifest, 'lang/$(language).lua')
+            if ($defaultIndex -lt 0 -or $defaultIndex -gt $localizedIndex) {
+              throw 'Manifest must load lang/default.lua before lang/$(language).lua.'
+            }
+          }
+
+          $defaultContent = Get-Content "$addonRoot/lang/default.lua" -Raw -Encoding UTF8
+          $defaultStringIds = [regex]::Matches($defaultContent, 'ZO_CreateStringId\("([^"]+)"') |
+            ForEach-Object { $_.Groups[1].Value } |
+            Sort-Object -Unique
+          $defaultKeys = [regex]::Matches($defaultContent, 'AddString\(\s*"([^"]+)"\s*,') |
+            ForEach-Object { $_.Groups[1].Value } |
+            Sort-Object -Unique
+
+          $invalidDefaultIds = @($defaultStringIds | Where-Object {
+              $_ -like "SI_*" -and
+              $_ -notlike "SI_BINDING_CATEGORY_*" -and
+              $_ -notlike "SI_BINDING_NAME_*"
+            })
+          if ($invalidDefaultIds.Count -gt 0) {
+            throw "Custom localization keys must not use the SI_ prefix: $($invalidDefaultIds -join ', ')"
+          }
+
+          foreach ($language in @("de", "es", "fr", "ru", "zh")) {
+            $languagePath = "$addonRoot/lang/$language.lua"
+            if (-not (Test-Path $languagePath)) {
+              throw "Localization file missing: $languagePath"
+            }
+
+            $languageContent = Get-Content $languagePath -Raw -Encoding UTF8
+            $localizedIds = [regex]::Matches($languageContent, 'AddString\(\s*"([^"]+)"\s*,') |
+              ForEach-Object { $_.Groups[1].Value } |
+              Sort-Object -Unique
+
+            $missingIds = @($defaultKeys | Where-Object { $localizedIds -notcontains $_ })
+            $extraIds = @($localizedIds | Where-Object { $defaultKeys -notcontains $_ })
+            if ($missingIds.Count -gt 0 -or $extraIds.Count -gt 0) {
+              throw "Localization keys differ in $languagePath. Missing: $($missingIds -join ', '); extra: $($extraIds -join ', ')"
+            }
+          }
+
+          foreach ($luaFile in ($files | Where-Object { $_.Extension -eq ".lua" })) {
+            $luaContent = Get-Content $luaFile.FullName -Raw -Encoding UTF8
+            if ($luaContent -match '(?is)\b[A-Za-z_][A-Za-z0-9_]*panel\s*:\s*SetHandler\s*\(\s*["'']On(?:Show|Hide)["'']') {
+              throw "Direct LAM panel OnShow/OnHide handler found: $($luaFile.FullName)"
+            }
+          }
+
+          Write-Host "Package structure validation passed."
+
+      - name: Build ZIP
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path release -Force | Out-Null
+
+          $zipPath = "release/$env:ZIP_NAME"
+
+          if (Test-Path $zipPath) {
+            Remove-Item $zipPath -Force
+          }
+
+          Compress-Archive -Path "DynamicEncounterTracker" -DestinationPath $zipPath -Force
+
+          if (-not (Test-Path $zipPath)) {
+            throw "ZIP was not created: $zipPath"
+          }
+
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $archive = [System.IO.Compression.ZipFile]::OpenRead((Resolve-Path $zipPath).Path)
+          try {
+            $entries = @($archive.Entries)
+            $topLevelNames = @($entries |
+              ForEach-Object { ($_.FullName -replace '\\', '/').Split('/')[0] } |
+              Where-Object { $_ } |
+              Sort-Object -Unique)
+
+            if ($topLevelNames.Count -ne 1 -or $topLevelNames[0] -ne "DynamicEncounterTracker") {
+              throw "ZIP must contain exactly one top-level folder named 'DynamicEncounterTracker'."
+            }
+
+            foreach ($entry in $entries) {
+              $segments = @(($entry.FullName -replace '\\', '/').Split('/') | Where-Object { $_ })
+              foreach ($segment in $segments) {
+                if ($segment -in @(".git", ".github", ".vscode", "tools", "docs", "release", "SavedVariables", "__MACOSX")) {
+                  throw "Forbidden path in ZIP: $($entry.FullName)"
+                }
+              }
+            }
+          }
+          finally {
+            $archive.Dispose()
+          }
+
+          Write-Host "Created ZIP: $zipPath"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Dynamic Encounter Tracker ${{ env.VERSION }}
+          files: release/${{ env.ZIP_NAME }}
+          body_path: docs/release-notes/GITHUB_RELEASE_${{ github.ref_name }}.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

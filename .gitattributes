@@ -1,0 +1,31 @@
+# Default text handling
+* text=auto
+
+# PowerShell scripts should use CRLF on Windows
+*.ps1 text eol=crlf
+*.ps1.template text eol=crlf
+
+# YAML files are best kept with LF
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Markdown and text templates
+*.md text eol=lf
+*.md.template text eol=lf
+*.txt text eol=lf
+*.txt.template text eol=lf
+
+# Lua, XML and addon manifest files
+*.lua text eol=lf
+*.lua.template text eol=lf
+*.xml text eol=lf
+
+# Template helper files
+*.template text=auto
+
+# Binary files
+*.zip binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.dds binary

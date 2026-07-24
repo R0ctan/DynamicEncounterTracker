@@ -1,0 +1,25 @@
+[CENTER][SIZE="6"][b]Dynamic Encounter Tracker[/b][/SIZE][/CENTER]
+[CENTER][SIZE="3"]One-sentence hook: the pain point this addon removes.[/SIZE][/CENTER]
+
+[SIZE="3"][b]Short problem statement in bold.[/b] One or two sentences expanding on the pain point with a concrete scenario. Then one sentence naming the fix this addon provides.[/SIZE]
+
+[SIZE="3"]Optional: list the areas/features this addon covers in one line, and point to a Settings section further down if every feature is configurable.[/SIZE]
+
+[CENTER][SIZE="3"][b]Available in N languages[/b]
+[IMG]https://flagcdn.com/24x18/gb.png[/IMG] English  ·  [IMG]https://flagcdn.com/24x18/de.png[/IMG] Deutsch[/SIZE][/CENTER]
+
+
+[SIZE="5"][b][color=#DAA520]Area Name[/color][/b][/SIZE]
+[IMG]https://raw.githubusercontent.com/R0ctan/DynamicEncounterTracker/main/docs/assets/{{ADDON_NAME_LOWER}}_areaname.jpg[/IMG]
+[SIZE="2"][i]One-sentence pain-point hook specific to this area, phrased as a relatable scenario.[/i][/SIZE]
+[SIZE="2"][b][color=#DAA520][1][/color][/b] Feature bullet — what it does, phrased as a benefit, not an implementation detail.[/SIZE]
+[SIZE="2"][b][color=#DAA520][2][/color][/b] Next feature bullet.[/SIZE]
+
+
+[SIZE="5"][b][color=#DAA520]Settings[/color][/b][/SIZE]
+[SIZE="2"]Everything above is configurable per area — colors, sorting, and markers can each be toggled independently in the addon settings panel.[/SIZE]
+
+
+[b]Optional In-Game Support[/b]
+[SIZE="2"]If you enjoy this addon, an in-game gold tip to @YourGamertag is always appreciated — but never expected. No pressure, no obligation.[/SIZE]
+

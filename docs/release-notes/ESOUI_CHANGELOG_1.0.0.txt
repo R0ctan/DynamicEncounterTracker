@@ -1,0 +1,6 @@
+1.0.0
+- Initial scaffold release.
+- Added basic addon structure.
+- Added localization structure.
+- Added local development wrappers for validate, build, deploy and release.
+

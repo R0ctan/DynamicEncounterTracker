@@ -1,0 +1,42 @@
+# Release output
+release/
+
+# Local documentation material
+docs/local/
+
+# AGENTS.md defaults to ignored (may contain project-specific working notes).
+# Track it deliberately with `git add -f AGENTS.md` once it should ship with the repo
+# (as done in StickerbookPlus) - just make sure it holds no private paths/tokens first.
+AGENTS.md
+
+# docs/assets/ is NOT ignored: screenshots/flags hosted there via raw.githubusercontent.com
+# for ESOUI_DESCRIPTION.txt [IMG] tags need to be committed and pushed.
+
+# Claude Code local config
+.claude/
+
+# Local/editor files
+.vscode/*
+!.vscode/tasks.json
+.idea/
+*.code-workspace
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ESO SavedVariables must never be committed
+SavedVariables/
+*.bak
+*.tmp
+
+# Logs
+*.log
+
+# Package junk
+__MACOSX/
+
+# Temporary directory listings
+struct.txt
+

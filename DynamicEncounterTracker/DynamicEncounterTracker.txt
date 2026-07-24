@@ -1,0 +1,16 @@
+## Title: Dynamic Encounter Tracker
+## Author: R0ctan
+## Version: 1.0.0
+## AddOnVersion: 10000
+## APIVersion: 101050 101051
+## DependsOn: LibAddonMenu-2.0>=43
+## Credits: AI-assisted development by Auralith AI
+
+lang/default.lua
+lang/$(language).lua
+
+Shared/NextTryChat.lua
+Shared/NextTryWindowVisibility.lua
+
+DynamicEncounterTracker.lua
+
