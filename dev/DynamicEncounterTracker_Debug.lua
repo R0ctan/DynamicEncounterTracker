@@ -280,8 +280,15 @@ function DE:_DebugGetStableLearnedSequence(eventName)
         return nil, nil
     end
 
+    -- variants == 1 guarantees the loop above assigned signature exactly
+    -- once (variants and signature are always set together per iteration),
+    -- so signature is a string here even though the LS cannot correlate the
+    -- counter with the separate signature variable. Same class of false
+    -- positive as docs/KNOWLEDGE.md section 2 ("need-check-nil bei
+    -- paarweise korrelierten Feldern"), here via a loop counter instead of
+    -- a flag+timestamp pair.
     local sequence = {}
-    for idText in string.gmatch(signature, "[^,]+") do
+    for idText in string.gmatch(signature, "[^,]+") do ---@diagnostic disable-line: param-type-mismatch
         sequence[#sequence + 1] = tonumber(idText)
     end
     return sequence, count
@@ -314,8 +321,10 @@ function DE:_DebugGetStableLearnedLocationSequence(eventName)
         return nil, nil
     end
 
+    -- Same false positive as _DebugGetStableLearnedSequence above: variants
+    -- == 1 guarantees signature was assigned exactly once in the loop.
     local sequence = {}
-    for indexText in string.gmatch(signature, "[^,]+") do
+    for indexText in string.gmatch(signature, "[^,]+") do ---@diagnostic disable-line: param-type-mismatch
         sequence[#sequence + 1] = tonumber(indexText)
     end
     return sequence, count
@@ -957,12 +966,17 @@ function DE:DebugWorldEvents()
         end
         table.sort(childIds)
 
+        -- respawnTiming was assigned above from `self.state.eventData and
+        -- self:GetRespawnTiming(...)`, so it is non-nil whenever
+        -- self.state.eventData is truthy, exactly the condition guarding
+        -- this block. The LS cannot correlate the two separate `if`
+        -- checks on the same expression.
         self:DebugPrint(string.format(
             "Configured event: parentInstanceId=%d childInstanceIds=%s earliestSeconds=%d expectedSeconds=%d",
             self.state.eventData.parentWorldEventInstanceId,
             table.concat(childIds, ","),
-            respawnTiming.earliestSeconds,
-            respawnTiming.expectedSeconds
+            respawnTiming.earliestSeconds, ---@diagnostic disable-line: need-check-nil, undefined-field
+            respawnTiming.expectedSeconds ---@diagnostic disable-line: need-check-nil, undefined-field
         ))
     end
 

@@ -155,19 +155,27 @@ function DE:RecordEncounterActivation(config, isExact, source)
         local startToStart = nil
         local endToStart = nil
 
+        -- lastStartExact/lastEndAt-style flag+timestamp pairs are always
+        -- assigned together, so the guard above already guarantees the
+        -- timestamp is non-nil here. The language server cannot correlate
+        -- two independent table fields across an `and`, hence the disables
+        -- below. See docs/KNOWLEDGE.md section 2 ("need-check-nil bei
+        -- paarweise korrelierten Feldern") for the full pattern writeup.
+        ---@diagnostic disable-next-line: need-check-nil
         if runtime.lastStartExact and runtime.lastStartAt then
-            startToStart = now - runtime.lastStartAt
+            startToStart = now - runtime.lastStartAt ---@diagnostic disable-line: need-check-nil
         end
+        ---@diagnostic disable-next-line: need-check-nil
         if runtime.lastEndExact and runtime.lastEndAt then
-            endToStart = now - runtime.lastEndAt
+            endToStart = now - runtime.lastEndAt ---@diagnostic disable-line: need-check-nil
         end
 
         if startToStart or endToStart then
             self:AddCycleMeasurement(config, {
-                previousStartAt = runtime.lastStartAt,
-                previousEndAt = runtime.lastEndAt,
+                previousStartAt = runtime.lastStartAt, ---@diagnostic disable-line: need-check-nil
+                previousEndAt = runtime.lastEndAt, ---@diagnostic disable-line: need-check-nil
                 currentStartAt = now,
-                previousEventDuration = runtime.lastEventDuration,
+                previousEventDuration = runtime.lastEventDuration, ---@diagnostic disable-line: need-check-nil
                 startToStart = startToStart,
                 endToStart = endToStart,
                 startSource = source or "unknown",
@@ -213,8 +221,9 @@ function DE:RecordEncounterDeactivation(config, isExact, source)
         runtime.lastEndExact = false
     end
 
+    ---@diagnostic disable-next-line: need-check-nil
     if exact and runtime.currentStartExact and runtime.currentStartAt then
-        runtime.lastEventDuration = now - runtime.currentStartAt
+        runtime.lastEventDuration = now - runtime.currentStartAt ---@diagnostic disable-line: need-check-nil
     else
         runtime.lastEventDuration = nil
     end
