@@ -1,25 +1,47 @@
 [CENTER][SIZE="6"][b]Dynamic Encounter Tracker[/b][/SIZE][/CENTER]
-[CENTER][SIZE="3"]One-sentence hook: the pain point this addon removes.[/SIZE][/CENTER]
+[CENTER][SIZE="3"]Never miss a chest window or wonder which step of a Dynamic Encounter you're on.[/SIZE][/CENTER]
 
-[SIZE="3"][b]Short problem statement in bold.[/b] One or two sentences expanding on the pain point with a concrete scenario. Then one sentence naming the fix this addon provides.[/SIZE]
+[SIZE="3"][b]Dynamic Encounters like Bilsa's Delivery or the Auridon flower vine hunt run through several steps, and it's easy to lose track of which reward chest you already qualify for.[/b] Dynamic Encounter Tracker shows a small status window with the current step, your participation state, and a notification the moment a configured reward chest becomes available. After the encounter ends, it also estimates when the next one will spawn.[/SIZE]
 
-[SIZE="3"]Optional: list the areas/features this addon covers in one line, and point to a Settings section further down if every feature is configurable.[/SIZE]
+[SIZE="3"]Currently covers three configured encounters: Stonefalls (Bilsa's Delivery), Glenumbra (the vampire hunt), and Auridon (the flower vine court). Everything below is optional and can be toggled in the settings panel.[/SIZE]
 
-[CENTER][SIZE="3"][b]Available in N languages[/b]
-[IMG]https://flagcdn.com/24x18/gb.png[/IMG] English  ·  [IMG]https://flagcdn.com/24x18/de.png[/IMG] Deutsch[/SIZE][/CENTER]
+[CENTER][SIZE="3"][b]Available in 6 languages[/b]
+[IMG]https://flagcdn.com/24x18/gb.png[/IMG] English  ·  [IMG]https://flagcdn.com/24x18/de.png[/IMG] Deutsch  ·  [IMG]https://flagcdn.com/24x18/fr.png[/IMG] Français  ·  [IMG]https://flagcdn.com/24x18/es.png[/IMG] Español  ·  [IMG]https://flagcdn.com/24x18/ru.png[/IMG] Русский  ·  [IMG]https://flagcdn.com/24x18/cn.png[/IMG] 简体中文[/SIZE][/CENTER]
 
 
-[SIZE="5"][b][color=#DAA520]Area Name[/color][/b][/SIZE]
-[IMG]https://raw.githubusercontent.com/R0ctan/DynamicEncounterTracker/main/docs/assets/{{ADDON_NAME_LOWER}}_areaname.jpg[/IMG]
-[SIZE="2"][i]One-sentence pain-point hook specific to this area, phrased as a relatable scenario.[/i][/SIZE]
-[SIZE="2"][b][color=#DAA520][1][/color][/b] Feature bullet — what it does, phrased as a benefit, not an implementation detail.[/SIZE]
-[SIZE="2"][b][color=#DAA520][2][/color][/b] Next feature bullet.[/SIZE]
+[SIZE="5"][b][color=#DAA520]Status Window[/color][/b][/SIZE]
+[IMG]https://raw.githubusercontent.com/R0ctan/DynamicEncounterTracker/main/docs/assets/dynamicencountertracker_status.jpg[/IMG]
+[SIZE="2"][i]No more guessing which step you're on or scrolling back through the objective log.[/i][/SIZE]
+[SIZE="2"][b][color=#DAA520][1][/color][/b] Shows the current zone, the localized encounter name and step text straight from ESO, and your participation state.[/SIZE]
+[SIZE="2"][b][color=#DAA520][2][/color][/b] Displays the known step position (e.g. "Step 7/11") and objective progress when ESO reports it.[/SIZE]
+[SIZE="2"][b][color=#DAA520][3][/color][/b] Movable and resizable; wraps long localized text automatically instead of cutting it off.[/SIZE]
+
+
+[SIZE="5"][b][color=#DAA520]Chest Notifications[/color][/b][/SIZE]
+[SIZE="2"][i]Chest windows can pass in seconds — a notification means you never have to watch the clock.[/i][/SIZE]
+[SIZE="2"][b][color=#DAA520][1][/color][/b] A notification appears only for chest timings with an explicit, tested rule for the current encounter — never a guess based on general step progress.[/SIZE]
+[SIZE="2"][b][color=#DAA520][2][/color][/b] Optional separate, movable chest alert window with configurable size, color and display duration.[/SIZE]
+
+
+[SIZE="5"][b][color=#DAA520]Respawn Timer[/color][/b][/SIZE]
+[SIZE="2"][i]Know when it's worth waiting around for the encounter to start again.[/i][/SIZE]
+[SIZE="2"][b][color=#DAA520][1][/color][/b] After a detected encounter end, shows a cooldown countdown, then a spawn window, then an upward-counting overrun if the encounter is late.[/SIZE]
+[SIZE="2"][b][color=#DAA520][2][/color][/b] Earliest and expected start times can be adjusted per encounter in `MM:SS` format if you track your own timings.[/SIZE]
 
 
 [SIZE="5"][b][color=#DAA520]Settings[/color][/b][/SIZE]
-[SIZE="2"]Everything above is configurable per area — colors, sorting, and markers can each be toggled independently in the addon settings panel.[/SIZE]
+[SIZE="2"]Everything above is configurable — window content, appearance, chest notifications and respawn timing each have their own settings section with tooltips.[/SIZE]
 
 
-[b]Optional In-Game Support[/b]
-[SIZE="2"]If you enjoy this addon, an in-game gold tip to @YourGamertag is always appreciated — but never expected. No pressure, no obligation.[/SIZE]
+[b]Known Limitations[/b]
+[SIZE="2"]Keyboard UI only; the addon has not been adapted for the gamepad-preferred UI mode.[/SIZE]
 
+
+[b]Required library:[/b]
+LibAddonMenu-2.0 r43 or newer
+
+[b]Author:[/b]
+R0ctan
+
+[b]Credits:[/b]
+AI-assisted development by Auralith AI

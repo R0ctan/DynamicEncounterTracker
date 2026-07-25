@@ -1,6 +1,8 @@
 1.0.0
-- Initial scaffold release.
-- Added basic addon structure.
-- Added localization structure.
-- Added local development wrappers for validate, build, deploy and release.
-
+- Initial public release, migrated from the earlier Dynamic Encounter addon (renamed, no other functional changes to encounter logic, chest rules or respawn timing).
+- Tracks configured Dynamic Encounters in Stonefalls, Glenumbra, and Auridon.
+- Shows the localized encounter name and step text supplied directly by ESO.
+- Shows the known step position, current objective progress, and remembered participation state.
+- Chest notifications only for explicit, tested per-encounter rules; includes a separate movable and customizable chest alert window.
+- Per-encounter cooldown, spawn window, and overdue counter after a detected encounter end, with adjustable earliest/expected respawn times.
+- Full localization for English, German, French, Spanish, Russian, and Simplified Chinese (German fully reviewed; the others are complete machine translations).

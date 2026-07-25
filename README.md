@@ -39,7 +39,11 @@ The production addon shows a normal cooldown until the earliest time, then a spa
 - Russian
 - Simplified Chinese
 
-English is the base language. German overrides are fully translated. French, Spanish, Russian, and Simplified Chinese files exist with the complete key set but currently hold English placeholder text pending real translation. Encounter names and objectives are never hard-coded; they are read from ESO in the active game language.
+English is the base language. German is fully translated and reviewed. French, Spanish, Russian, and Simplified Chinese are complete machine translations; a native-speaker review is recommended before relying on them for nuanced wording. Encounter names and objectives are never hard-coded; they are read from ESO in the active game language.
+
+## Known Limitations
+
+- Keyboard UI only; the addon has not been adapted for the gamepad-preferred UI mode.
 
 ## Requirements
 

@@ -2,7 +2,7 @@
 
 All notable changes to Dynamic Encounter Tracker are documented here.
 
-## 1.0.0
+## 1.0.0 — Initial release
 
 - Renamed the project from Dynamic Encounter to Dynamic Encounter Tracker (short form `DynET`, slash command `/dynet`)
 - Migrated the complete Dynamic Encounter 0.1.23 feature set into the new repository and addon namespace
