@@ -73,7 +73,10 @@
 1. aktive Kistenmeldung → 2. Spawnfenster-/Überschreitungshinweis im Cooldown → 3. lokalisierter ESO-Zusatzhinweis im aktiven Event → 4. `-`.
 
 ### Bewusst hartkodierte Debug-Statuszeilen (Dev-Modul)
-`GetDetectionText`/`GetParticipationDebugText`/`GetApiDebugText`/`GetTestDebugText` in `dev/DynamicEncounterTracker_Debug.lua` nutzen teils hartkodierten Text statt String-IDs — bewusst so (reines Dev-Werkzeug). Falls doch lokalisiert wird: die vorhandenen, ungenutzten IDs `DE_DEBUG_CHEST_NOT_CONFIGURED`/`DE_DEBUG_CHEST_FIXED` wiederverwenden bzw. bereinigen.
+`GetDetectionText`/`GetParticipationDebugText`/`GetApiDebugText`/`GetTestDebugText` in `dev/DynamicEncounterTracker_Debug.lua` sowie die einzelne Log-Zeile `"Die API meldet derzeit keine aktive World-Event-Instanz."` in `DebugWorldEvents()` nutzen hartkodierten Text statt String-IDs — bewusst so (reines Dev-Werkzeug, nur sichtbar via `/dynet debug`, nie im Produktionspaket). Falls doch lokalisiert wird: neue String-IDs anlegen (die früheren Kandidaten `DE_DEBUG_CHEST_NOT_CONFIGURED`/`DE_DEBUG_CHEST_FIXED`/`DE_SLASH_DEBUG_UNAVAILABLE` wurden am 2026-07-25 als dauerhaft ungenutzt aus allen 6 Sprachdateien entfernt, siehe Phase-2-Review).
+
+### TD-001 — erledigt (Phase-2-Review, 2026-07-25)
+Die im technischen Backlog vorgeschlagene Diagnose unbekannter World-Event-IDs ist bereits umfassend im Debug-Modul umgesetzt und geht über den ursprünglichen Vorschlag hinaus: `DebugWorldEventInstance` (pro Instanz: Typ, Location-Context, Rolle, Progress/Expire mit pcall-Absicherung), `DebugCurrentZoneWorldEventPOILinks` (POI-Verknüpfung), sowie die vollständige Step-/Map-Location-Lernlogik (`_DebugFinalizeStepRun`, `GetStableLearnedSequence`) mit dedupliziertem, zonenweise gespeichertem Verlauf. Alles ausschließlich im Dev-Build, keine Produktionsmeldung, kein Tracking-Fallback. Kein weiterer Umsetzungsbedarf.
 
 ### Unbestätigte Encounter-Bedingungen nicht ergänzen
 Auridon: Step 31 als Alternativbedingung für Kiste 1 und Step 34 für Kiste 2 sind NICHT bestätigt — erst nach gezieltem Live-Test ergänzen. Live-Messwerte der Respawn-Zeiten (Steinfälle 33:00, Glenumbra 30:11, Auridon 31:02/31:01) sind als Config-Standards hinterlegt.
@@ -102,8 +105,7 @@ Syntax (`texluac -p`), Produktiv-/Dev-Manifest-Trennung, Mocks mit/ohne Dev-Modu
 
 | Idee | Quelle/Anlass | Priorität |
 |---|---|---|
-| TD-001: Diagnose unbekannter World-Event-IDs (nur Dev-Version, dedupliziert protokollieren; kein Tracking-Fallback, keine Produktivmeldung; vorher API-Verfügbarkeit der Diagnosefelder prüfen) | TECHNICAL_DEBT, Status „Vorgemerkt" | mittel |
-| TD-002: SavedVariables-Verarbeitung in `MigrateSavedVariables()` + `NormalizeSavedVariables()` aufteilen (EnsureTable/EnsureNumberInRange/…-Helfer; keine blinde rekursive Generalreparatur — die bestehende explizite Validierung ist funktional und darf nicht durch eine riskantere Kurzlösung ersetzt werden) | TECHNICAL_DEBT, Status „Vorgemerkt" | mittel |
-| TD-003: Scanintervall (aktuell 1000 ms) — nur ändern, wenn Profiling/konkretes Problem Nutzen belegt; ggf. 2000 ms prüfen, 3000 ms nicht ungeprüft; vor Änderung den 11-Punkte-Testkatalog aus dem TD-Eintrag fahren | TECHNICAL_DEBT, Status „Beobachten" | niedrig |
-| TD-004: UI-String-/Farbcode-Caching — bewusst zurückgestellt; keine Memoization anhand veränderbarer Farbtabellen (liefert veraltete Ergebnisse); nur bei Profiling-Beleg | TECHNICAL_DEBT, Status „Zurückgestellt" | sehr niedrig |
+| TD-002: `Initialize()` in Migrate/Normalize/Bootstrap aufteilen (`MigrateSavedVariables()` + `NormalizeSavedVariables()` + Modul-/UI-Bootstrap; EnsureTable/EnsureNumberInRange/…-Helfer; keine blinde rekursive Generalreparatur — die bestehende explizite Validierung ist funktional und darf nicht durch eine riskantere Kurzlösung ersetzt werden) — zurückgestellt für v1.1 wegen Feature Freeze, nicht kurz vor Release an einer funktionierenden Funktion anfassen | TECHNICAL_DEBT, Status „Vorgemerkt"; bestätigt im Phase-2-Review 2026-07-25 | mittel |
 | Vor dem Leeren von `_trash` entscheiden: `CODEX_HANDOVER.md` als lebendes Dokument zurückholen oder endgültig verwerfen (Regeln sind nach KNOWLEDGE extrahiert, das Dokument war aber auf aktuellem Stand) | Bestandsaufnahme 2026-07-25 | niedrig |
+
+**TD-001:** erledigt, siehe Abschnitt 4. **TD-003/TD-004:** im Phase-2-Review 2026-07-25 bestätigt als bewusst akzeptierte, unveränderte Einschränkungen (Scanintervall 1000 ms bleibt ohne Profiling-Beleg; kein UI-String-/Farbcache ohne Profiling-Beleg) — kein Umsetzungsbedarf, nicht erneut aufgreifen ohne neue Messdaten.

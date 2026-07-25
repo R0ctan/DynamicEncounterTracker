@@ -653,22 +653,6 @@ function DE:GetStatusTextAndColor()
     return self:T("DE_STATUS_UNKNOWN"), self.sv.colors.unknown
 end
 
-function DE:GetSectionText()
-    if self.state.status ~= self.STATUS_ACTIVE then
-        return nil
-    end
-
-    if self.state.currentStepOrdinal and self.state.currentStepTotal then
-        return string.format("%d/%d", self.state.currentStepOrdinal, self.state.currentStepTotal)
-    end
-
-    local observedOrdinal = self:GetCurrentObservedPosition()
-    if observedOrdinal then
-        return string.format("%d/?", observedOrdinal)
-    end
-
-    return nil
-end
 
 function DE:GetCurrentSectionText()
     if self.state.status ~= self.STATUS_ACTIVE then
