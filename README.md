@@ -18,9 +18,9 @@ Dynamic Encounter Tracker is an ESO addon by R0ctan that tracks configured Dynam
 
 ## Configured Encounters
 
-- Stonefalls: 11-step sequence, 3 configured chest rules
-- Glenumbra: 13-step sequence, 3 configured chest rules
-- Auridon: 5-step sequence, 2 configured chest rules
+- Stonefalls: 3 configured chest rules
+- Glenumbra: 3 configured chest rules
+- Auridon: 2 configured chest rules
 
 Default respawn timings are based on repeated live measurements and are stored separately per encounter:
 

@@ -1,6 +1,6 @@
 # Dynamic Encounter Tracker 1.0.0
 
-Initial public release, migrated from the earlier Dynamic Encounter addon (renamed to Dynamic Encounter Tracker / `/dynet`; no functional changes to encounter logic, chest rules, or respawn timing).
+Initial public release.
 
 ## Features
 

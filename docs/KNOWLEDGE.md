@@ -143,6 +143,9 @@ Vollständiger Durchlauf des Testplans (`docs/local/PHASE8_TESTPLAN_1.0.0.md`) m
 ### CHANGELOG-Konsolidierung beim Release (Phase-9-Punkt, festgehalten in Phase 7)
 Beim Release wird die „Unreleased"-Sektion in den 1.0.0-Abschnitt konsolidiert. Rein interne Punkte ohne je veröffentlichten Vorzustand (z. B. der SavedVars-Rename `DynamicEncounterTrackerSavedVariables` → `DynamicEncounterTracker_Data`) entfallen im öffentlichen Changelog ersatzlos — es gab nie einen Endnutzer, der die alte Bezeichnung kannte. Erster öffentlicher Eintrag lautet „1.0.0 — Initial release" mit der Feature-Liste, nicht mit internen Umbenennungen.
 
+### Finaler Smoke-Test 1.0.0 — bestanden (2026-07-26)
+Test bewusst mit gelöschtem Addon-Ordner und gelöschten SavedVariables vor dem Deploy durchgeführt (deckt „frische Installation" zusätzlich zum Grenzfall aus Phase 3 nochmal real ab, diesmal mit komplett leerem Zustand statt nur umbenannten SavedVars). Ergebnis: Addon lädt fehlerfrei, Version korrekt, Settings funktionieren, Statusfenster erscheint zonenrichtig. Deployed auf Hauptaccount und alle drei Testaccounts (deploy + deploy-multi).
+
 ## 8. Ideenliste / Nächste Version
 
 <!-- Features und Verbesserungen, die während Freeze/Entwicklung anfielen, aber bewusst verschoben wurden. -->
