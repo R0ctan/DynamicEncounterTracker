@@ -4,6 +4,7 @@ local WM = WINDOW_MANAGER
 DE.WINDOW_MIN_WIDTH = 480
 DE.WINDOW_MAX_WIDTH = 980
 DE.WINDOW_MIN_HEIGHT = 150
+DE.MINIMAL_MIN_HEIGHT = 66
 DE.WINDOW_DEFAULT_HEIGHT = 190
 DE.WINDOW_DEFAULT_WIDTH = 580
 DE.CHEST_ALERT_MIN_WIDTH = 320
@@ -199,6 +200,8 @@ function DE:CreateUI()
         status = self:CreateRow(window, "DynamicEncounterTrackerStatus", 99, true),
         currentSection = self:CreateRow(window, "DynamicEncounterTrackerCurrentSection", 126, true),
         hint = self:CreateRow(window, "DynamicEncounterTrackerHint", 153, true),
+        minimal = self:CreateRow(window, "DynamicEncounterTrackerMinimal", 6, false),
+        minimalParticipation = self:CreateRow(window, "DynamicEncounterTrackerMinimalParticipation", 6, false),
     }
 
     self.rows.zone.label:SetText(self:T("DE_LABEL_ZONE"))
@@ -206,6 +209,10 @@ function DE:CreateUI()
     self.rows.status.label:SetText(self:T("DE_LABEL_STATUS"))
     self.rows.currentSection.label:SetText(self:T("DE_LABEL_SECTION"))
     self.rows.hint.label:SetText(self:T("DE_LABEL_HINT"))
+    self.rows.minimal.label:SetHidden(true)
+    self.rows.minimal.value:SetHorizontalAlignment(TEXT_ALIGN_CENTER)
+    self.rows.minimalParticipation.label:SetHidden(true)
+    self.rows.minimalParticipation.value:SetHorizontalAlignment(TEXT_ALIGN_CENTER)
 
     self:ModuleHook("debug", "CreateStatusRows", window)
 
@@ -228,6 +235,21 @@ function DE:CreateUI()
     closeButton:SetHandler("OnClicked", function()
         self.sv.showWindow = false
         self:RefreshVisibility()
+    end)
+
+    local minimalToggle = WM:CreateControl("DynamicEncounterTrackerWindowMinimalToggle", window, CT_LABEL)
+    self.minimalToggle = minimalToggle
+    minimalToggle:SetDimensions(20, 20)
+    minimalToggle:SetAnchor(BOTTOMRIGHT, closeButton, BOTTOMLEFT, -4, -3)
+    minimalToggle:SetHorizontalAlignment(TEXT_ALIGN_CENTER)
+    minimalToggle:SetVerticalAlignment(TEXT_ALIGN_BOTTOM)
+    minimalToggle:SetMouseEnabled(true)
+    minimalToggle:SetHandler("OnMouseUp", function(_, button)
+        if button == MOUSE_BUTTON_INDEX_LEFT then
+            self.sv.minimalMode = not self.sv.minimalMode
+            self:RefreshUI()
+            self:RefreshSettingsPanel()
+        end
     end)
 
     local resizeHandle = WM:CreateControl("DynamicEncounterTrackerWindowResizeHandle", window, CT_CONTROL)
@@ -384,10 +406,120 @@ function DE:MeasureRowHeight(row)
     return zo_max(baseHeight, math.ceil(textHeight + 4))
 end
 
+function DE:RefreshMinimalToggleControl()
+    if not self.minimalToggle then
+        return
+    end
+
+    self.minimalToggle:SetText("_")
+end
+
+function DE:MeasureLabelTextWidth(label)
+    label:ClearAnchors()
+    label:SetAnchor(TOPLEFT, self.window, TOPLEFT, 0, 0)
+    label:SetWidth(self.WINDOW_MAX_WIDTH)
+    label:SetHeight(0)
+
+    local textWidth = label.GetTextWidth and label:GetTextWidth() or 0
+    if type(textWidth) ~= "number" or textWidth <= 0 then
+        textWidth = 60
+    end
+    return textWidth
+end
+
+function DE:RefreshWindowLayoutMinimal()
+    local row = self.rows.minimal
+    local participationRow = self.rows.minimalParticipation
+    local rowY = 45
+    row.value:SetHidden(false)
+
+    self.titleLabel:SetText(self:T("DE_ADDON_NAME_SHORT"))
+
+    local participationText, participationColor = self:GetMinimalParticipationLine()
+    local showParticipationRow = participationText ~= nil
+    participationRow.value:SetHidden(not showParticipationRow)
+    if showParticipationRow then
+        participationRow.value:SetText(participationText)
+        SetLabelColor(participationRow.value, participationColor)
+    end
+
+    local statusTextWidth = self:MeasureLabelTextWidth(row.value)
+    local titleTextWidth = self:MeasureLabelTextWidth(self.titleLabel)
+    local participationTextWidth = showParticipationRow and self:MeasureLabelTextWidth(participationRow.value) or 0
+    local textHeight = self:MeasureRowHeight(row)
+
+    local closeButtonVisible = self.closeButton and not self.closeButton:IsHidden()
+    local minimalToggleVisible = self.minimalToggle and not self.minimalToggle:IsHidden()
+    local minimalRightMargin
+    if closeButtonVisible and minimalToggleVisible then
+        minimalRightMargin = 44
+    elseif closeButtonVisible or minimalToggleVisible then
+        minimalRightMargin = 24
+    else
+        minimalRightMargin = ROW_LABEL_LEFT -- neither button visible: mirror the left margin for a symmetric, centered look
+    end
+    local safetyMargin = 24 -- guards against GetTextWidth rounding/measurement slack
+    local contentWidth = zo_max(statusTextWidth, titleTextWidth, participationTextWidth)
+    local width = zo_clamp(math.ceil(contentWidth) + safetyMargin + ROW_LABEL_LEFT + minimalRightMargin, 60, self.WINDOW_MAX_WIDTH)
+
+    row.value:ClearAnchors()
+    row.value:SetAnchor(TOPLEFT, self.window, TOPLEFT, ROW_LABEL_LEFT, rowY)
+    row.value:SetAnchor(TOPRIGHT, self.window, TOPRIGHT, -minimalRightMargin, rowY)
+    row.value:SetHeight(textHeight)
+
+    local contentBottom = rowY + math.ceil(textHeight)
+    if showParticipationRow then
+        local participationRowY = contentBottom + 1
+        participationRow.value:ClearAnchors()
+        participationRow.value:SetAnchor(TOPLEFT, self.window, TOPLEFT, ROW_LABEL_LEFT, participationRowY)
+        participationRow.value:SetAnchor(TOPRIGHT, self.window, TOPRIGHT, -minimalRightMargin, participationRowY)
+        participationRow.value:SetHeight(textHeight)
+        contentBottom = participationRowY + math.ceil(textHeight)
+    end
+
+    local height = zo_max(self.MINIMAL_MIN_HEIGHT, contentBottom + 11)
+
+    self.titleLabel:ClearAnchors()
+    self.titleLabel:SetAnchor(TOPLEFT, self.window, TOPLEFT, 18, 7)
+    self.titleLabel:SetAnchor(TOPRIGHT, self.window, TOPRIGHT, -minimalRightMargin, 7)
+    self.titleLabel:SetHeight(31)
+
+    self.currentWindowHeight = height
+    self.window:SetDimensionConstraints(60, height, self.WINDOW_MAX_WIDTH, height)
+    self.window:SetDimensions(width, height)
+end
+
 function DE:RefreshWindowLayout()
     if not self.window or not self.rows then
         return
     end
+
+    self:RefreshMinimalToggleControl()
+
+    if self.sv.minimalMode then
+        self.rows.zone.label:SetHidden(true)
+        self.rows.zone.value:SetHidden(true)
+        self.rows.event.label:SetHidden(true)
+        self.rows.event.value:SetHidden(true)
+        self.rows.status.label:SetHidden(true)
+        self.rows.status.value:SetHidden(true)
+        self.rows.currentSection.label:SetHidden(true)
+        self.rows.currentSection.value:SetHidden(true)
+        self.rows.hint.label:SetHidden(true)
+        self.rows.hint.value:SetHidden(true)
+
+        self:RefreshWindowLayoutMinimal()
+        self.sv.size.height = self.currentWindowHeight
+        return
+    end
+
+    self.rows.minimal.value:SetHidden(true)
+    self.rows.minimalParticipation.value:SetHidden(true)
+    self.titleLabel:SetText(self:T("DE_ADDON_NAME"))
+    self.titleLabel:ClearAnchors()
+    self.titleLabel:SetAnchor(TOPLEFT, self.window, TOPLEFT, 18, 7)
+    self.titleLabel:SetAnchor(TOPRIGHT, self.window, TOPRIGHT, -44, 7)
+    self.titleLabel:SetHeight(31)
 
     local y = 45
     local rowGap = 1
@@ -527,7 +659,8 @@ function DE:ApplyLockState()
     self.window:SetMouseEnabled(unlocked)
     self.window:SetResizeHandleSize(unlocked and RESIZE_HANDLE_SIZE or 0)
     self.titleLabel:SetMouseEnabled(unlocked)
-    self.closeButton:SetHidden(not unlocked)
+    self.closeButton:SetHidden(not unlocked or self.sv.showCloseButton == false)
+    self.minimalToggle:SetHidden(not unlocked or self.sv.showMinimalToggleButton == false)
     self.resizeHandle:SetHidden(not unlocked)
     self.resizeHandle:SetMouseEnabled(false)
     self:ApplyChestAlertInteraction()
@@ -544,6 +677,8 @@ function DE:ApplyAppearance()
     local titleFont = string.format("$(BOLD_FONT)|%d|soft-shadow-thick", size + 4)
 
     self.titleLabel:SetFont(titleFont)
+    self.minimalToggle:SetFont(boldFont)
+    SetLabelColor(self.minimalToggle, self.sv.colors.label)
     local alertTextSize = zo_clamp(tonumber(self.sv.chestAlertTextSize) or 28, 16, 42)
     self.centerAlertLabel:SetFont(string.format("$(BOLD_FONT)|%d|soft-shadow-thick", alertTextSize))
 
@@ -594,8 +729,25 @@ function DE:GetParticipationStatusTextAndColor()
     return self:T("DE_PARTICIPATION_UNKNOWN"), self.sv.colors.cooldown
 end
 
-function DE:GetStatusTextAndColor()
+function DE:GetMinimalParticipationLine()
+    if self.state.status ~= self.STATUS_ACTIVE then
+        return nil
+    end
+    if self.sv.showParticipationInStatus == false then
+        return nil
+    end
+    if self.state.participationDisplayState ~= self.PARTICIPATION_DETECTED then
+        return nil
+    end
+
+    return self:T("DE_PARTICIPATION_DETECTED"), self.sv.colors.active
+end
+
+function DE:GetStatusTextAndColor(includeParticipation)
     local status = self.state.status
+    if includeParticipation == nil then
+        includeParticipation = true
+    end
 
     if status == self.STATUS_ACTIVE then
         local parts = { self:T("DE_STATUS_UP") }
@@ -622,7 +774,7 @@ function DE:GetStatusTextAndColor()
             parts[#parts + 1] = self:T("DE_STATUS_PROGRESS_FMT", progressPercent)
         end
 
-        if self.sv.showParticipationInStatus ~= false then
+        if includeParticipation and self.sv.showParticipationInStatus ~= false then
             local participationText, participationColor = self:GetParticipationStatusTextAndColor()
             parts[#parts + 1] = ColorizeText(participationText, participationColor)
         end
@@ -709,6 +861,10 @@ function DE:RefreshUI()
     local statusText, statusColor = self:GetStatusTextAndColor()
     self.rows.status.value:SetText(statusText)
     SetLabelColor(self.rows.status.value, statusColor)
+
+    local minimalStatusText, minimalStatusColor = self:GetStatusTextAndColor(false)
+    self.rows.minimal.value:SetText(string.format("%s %s", self:T("DE_LABEL_STATUS"), minimalStatusText))
+    SetLabelColor(self.rows.minimal.value, minimalStatusColor)
 
     local hintText, hintColor = self:GetHintTextAndColor()
     self.rows.hint.value:SetText(hintText)

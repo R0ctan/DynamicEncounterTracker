@@ -1,10 +1,10 @@
 [CENTER][SIZE="6"][b]Dynamic Encounter Tracker[/b][/SIZE][/CENTER]
-[CENTER][SIZE="3"]Stop fighting through a whole Dynamic Encounter only to find out you were never counted.[/SIZE][/CENTER]
+[CENTER][SIZE="3"]See the current step of an encounter, whether your participation has been registered, and when the next one is expected.[/SIZE][/CENTER]
 
-[SIZE="3"][b]A Dynamic Encounter can run for a dozen steps right in front of you and still hand you nothing.[/b] Participation is tracked per step, reward chests appear at specific points, and the game tells you none of it. Dynamic Encounter Tracker shows a small status window with the current step, whether your participation has been registered, and a notification the moment a reward chest becomes available. After the encounter ends, it counts down to the next one.[/SIZE]
+[SIZE="3"][b]Dynamic Encounters run through a series of steps, and the game shares little about their progress.[/b] Whether your participation has been registered, when a reward chest becomes available, and how long until the encounter runs again — none of it is collected in one place. Dynamic Encounter Tracker puts it into one small window: the current step and its progress, your participation state, a notification when a chest appears, and a countdown to the next expected encounter once this one ends.[/SIZE]
 
-[SIZE="3"]Currently covers three configured encounters: Stonefalls (Bilsa's Delivery), Glenumbra (the vampire hunt), and Auridon (the flower vine court).
-Everything below is optional and can be toggled in the settings panel — see the [b]Settings[/b] section near the bottom.[/SIZE]
+[SIZE="3"]Currently covers three configured encounters: Stonefalls (Bilsa's Delivery), Glenumbra (Vampire Hunt), and Auridon (Flower Vine Court).
+All display elements, notifications and timers described below can be configured in the settings panel — see the [b]Settings[/b] section near the bottom.[/SIZE]
 
 [CENTER][SIZE="3"][b]Available in 6 languages[/b]
 [IMG]https://flagcdn.com/24x18/gb.png[/IMG] English  ·  [IMG]https://flagcdn.com/24x18/de.png[/IMG] Deutsch  ·  [IMG]https://flagcdn.com/24x18/fr.png[/IMG] Français  ·  [IMG]https://flagcdn.com/24x18/es.png[/IMG] Español  ·  [IMG]https://flagcdn.com/24x18/ru.png[/IMG] Русский  ·  [IMG]https://flagcdn.com/24x18/cn.png[/IMG] 简体中文[/SIZE][/CENTER]
@@ -12,38 +12,38 @@ Everything below is optional and can be toggled in the settings panel — see th
 
 [SIZE="5"][b][color=#DAA520]Status Window[/color][/b][/SIZE]
 [IMG]https://raw.githubusercontent.com/R0ctan/DynamicEncounterTracker/main/docs/assets/dynenc_unknown.jpg[/IMG]
-[SIZE="2"][i]Walk into a supported zone and you already know where you stand — no scrolling back through the objective log.[/i][/SIZE]
-[SIZE="2"][b][color=#DAA520][1][/color][/b] A compact window with everything in one place — zone, encounter, status, current step text and a note line. Movable, resizable, and closable; it wraps long text instead of cutting it off.[/SIZE]
-[SIZE="2"][b][color=#DAA520][2][/color][/b] Honest when nothing is known — fresh in the zone with no encounter detected yet, the status simply reads "Unknown" instead of inventing a state or a timer.[/SIZE]
+[SIZE="2"][i]Enter a supported zone and the window tells you where things stand.[/i][/SIZE]
+[SIZE="2"][b][color=#DAA520][1][/color][/b] A compact window with everything in one place — zone, encounter, status, current step text and a note line. The window can be moved, resized, or closed, and it wraps long text instead of cutting it off.[/SIZE]
+[SIZE="2"][b][color=#DAA520][2][/color][/b] Honest when nothing is known — when you have just entered the zone and no encounter has been detected yet, the status simply reads "Unknown" instead of inventing a state or a timer.[/SIZE]
 
 
 [SIZE="5"][b][color=#DAA520]Participation & Step Progress[/color][/b][/SIZE]
 [IMG]https://raw.githubusercontent.com/R0ctan/DynamicEncounterTracker/main/docs/assets/dynenc_up_not_participating.jpg[/IMG]
-[SIZE="2"][i]Fought your way through the whole thing and still got no chest? Then you were never counted — and nothing on screen told you.[/i][/SIZE]
+[SIZE="2"][i]Took part in an encounter and received no chest? One possible reason is that your participation was never registered — and the game gives no clear sign when that happens.[/i][/SIZE]
 [SIZE="2"][b][color=#DAA520][1][/color][/b] Encounter name shown as ESO calls it, in your client language.[/SIZE]
-[SIZE="2"][b][color=#DAA520][2][/color][/b] "Participation open" — the encounter is running, but your contribution has not been registered yet. Chests would not count for you right now.[/SIZE]
-[SIZE="2"][b][color=#DAA520][3][/color][/b] The current step described in full text, straight from the game.[/SIZE]
+[SIZE="2"][b][color=#DAA520][2][/color][/b] "Participation open" — the encounter is running, but your contribution has not been registered yet, so reward chests may not count for you.[/SIZE]
+[SIZE="2"][b][color=#DAA520][3][/color][/b] The current step in full text, using the objective text provided by the game.[/SIZE]
 
 [IMG]https://raw.githubusercontent.com/R0ctan/DynamicEncounterTracker/main/docs/assets/dynenc_up_participating.jpg[/IMG]
-[SIZE="2"][i]The same encounter a moment later — now you are in.[/i][/SIZE]
-[SIZE="2"][b][color=#DAA520][4][/color][/b] Step position and progress — "Step 1/13 (10%)" tells you how far the encounter has come and how far the current step has to go, whenever ESO reports it.[/SIZE]
-[SIZE="2"][b][color=#DAA520][5][/color][/b] "Participation detected" — your contribution has been registered and reward chests will count for you.[/SIZE]
-[SIZE="2"][b][color=#DAA520][6][/color][/b] Note line with the condition that actually matters for this step, so you don't waste the step on the wrong action.[/SIZE]
+[SIZE="2"][i]The same encounter a moment later — your participation has now been registered.[/i][/SIZE]
+[SIZE="2"][b][color=#DAA520][1][/color][/b] Step position and progress — "Step 1/13 (10%)" tells you how far the encounter has come and how far the current step has to go, whenever ESO reports it.[/SIZE]
+[SIZE="2"][b][color=#DAA520][2][/color][/b] "Participation detected" — your contribution has been registered for this encounter.[/SIZE]
+[SIZE="2"][b][color=#DAA520][3][/color][/b] Note line with the condition that matters for the current step, so you don't spend it on the wrong action.[/SIZE]
 
 
 [SIZE="5"][b][color=#DAA520]Chest Notifications[/color][/b][/SIZE]
 [IMG]https://raw.githubusercontent.com/R0ctan/DynamicEncounterTracker/main/docs/assets/dynenc_chest.jpg[/IMG]
-[SIZE="2"][i]Chest windows can pass in seconds — a notification means you never have to watch the clock.[/i][/SIZE]
+[SIZE="2"][i]A chest can appear while you are still fighting — easy to walk away without noticing it.[/i][/SIZE]
 [SIZE="2"][b][color=#DAA520][1][/color][/b] Cooldown countdown after an encounter ends, with the expected time until the next one starts in this zone.[/SIZE]
 [SIZE="2"][b][color=#DAA520][2][/color][/b] The note line names the exact chest — "Chest 1 has appeared", "Chest 2 has appeared", or "The final chest has appeared" — instead of a generic "something appeared".[/SIZE]
 [SIZE="2"][b][color=#DAA520][3][/color][/b] Optional separate alert window, movable and configurable in size, color and display duration, for when you are not watching the status window.[/SIZE]
-[SIZE="2"][b][color=#DAA520][4][/color][/b] A notification appears only for chest timings with an explicit, tested rule for the current encounter — never a guess based on general step progress.[/SIZE]
+[SIZE="2"][b][color=#DAA520][4][/color][/b] Notifications appear only for chest timings with an explicit, tested rule for the current encounter; step progress alone is never used to predict one.[/SIZE]
 
 
 [SIZE="5"][b][color=#DAA520]Respawn Timer[/color][/b][/SIZE]
-[SIZE="2"][i]Know whether it's worth waiting around — or whether you have time for a quick delve run.[/i][/SIZE]
-[SIZE="2"][b][color=#DAA520][1][/color][/b] After a detected encounter end: a cooldown countdown, then a spawn window, then an upward-counting overrun if the encounter is running late.[/SIZE]
-[SIZE="2"][b][color=#DAA520][2][/color][/b] Earliest and expected start times can be adjusted per encounter in MM:SS format if you track your own timings.[/SIZE]
+[SIZE="2"][i]Know whether it is worth waiting nearby or whether there is time for something else.[/i][/SIZE]
+[SIZE="2"]After a detected encounter ends, the addon shows a cooldown countdown followed by the expected spawn window. If the expected start time passes, the timer keeps counting upward to show how late the encounter is.[/SIZE]
+[SIZE="2"]Earliest and expected start times can be adjusted separately for each encounter in MM:SS format.[/SIZE]
 
 
 [SIZE="5"][b][color=#DAA520]Settings[/color][/b][/SIZE]
@@ -52,10 +52,10 @@ Everything below is optional and can be toggled in the settings panel — see th
 
 [b]Slash command[/b]
 [SIZE="2"]/dynet
-- /dynet on — enable the addon
-- /dynet off — disable the addon
-- /dynet show — show the status window
-- /dynet hide — hide the status window[/SIZE]
+/dynet on — enable the addon
+/dynet off — disable the addon
+/dynet show — show the status window
+/dynet hide — hide the status window[/SIZE]
 
 [SIZE="2"][b]Known Limitations[/b]
 Keyboard UI only; the addon has not been adapted for the gamepad-preferred UI mode.[/SIZE]
@@ -72,7 +72,7 @@ AI-assisted development by Auralith AI[/SIZE]
 [SIZE="2"][b]Optional In-Game Support[/b]
 Dynamic Encounter Tracker is completely free to use.
 If you enjoy the addon and it helps you catch the chests you would otherwise have missed, I'd be very happy about a small in-game gold donation as a little thank-you.
-No pressure, no obligation — just if you like the addon and want to support the next one.
+No pressure and no obligation — only if you enjoy the addon and would like to support its continued development.
 In-game mail: [FONT="Courier New"][B]@TheWipeGuy[/B][/FONT][/SIZE]
 
 [SIZE="5"]Thank you for using Dynamic Encounter Tracker — may your chests always count![/SIZE]

@@ -25,8 +25,8 @@ local function GetDefaultColor(color)
 end
 
 function DE:RefreshSettingsPanel()
-    if self.settingsPanel then
-        CALLBACK_MANAGER:FireCallbacks("LAM-RefreshPanel", self.settingsPanel)
+    if self.settingsPanel and self.settingsPanel.RefreshPanel then
+        self.settingsPanel:RefreshPanel()
     end
 end
 
@@ -131,6 +131,45 @@ function DE:CreateSettings()
             getFunc = function() return not self.sv.locked end,
             setFunc = function(value)
                 self.sv.locked = not value
+                self:ApplyLockState()
+            end,
+            disabled = DisabledWhenOff,
+            width = "full",
+        },
+        {
+            type = "checkbox",
+            name = L("DE_SETTINGS_MINIMAL_MODE"),
+            tooltip = L("DE_SETTINGS_MINIMAL_MODE_TT"),
+            default = self.defaults.minimalMode,
+            getFunc = function() return self.sv.minimalMode end,
+            setFunc = function(value)
+                self.sv.minimalMode = value
+                self:RefreshUI()
+            end,
+            disabled = DisabledWhenOff,
+            width = "full",
+        },
+        {
+            type = "checkbox",
+            name = L("DE_SETTINGS_SHOW_CLOSE_BUTTON"),
+            tooltip = L("DE_SETTINGS_SHOW_CLOSE_BUTTON_TT"),
+            default = self.defaults.showCloseButton,
+            getFunc = function() return self.sv.showCloseButton end,
+            setFunc = function(value)
+                self.sv.showCloseButton = value
+                self:ApplyLockState()
+            end,
+            disabled = DisabledWhenOff,
+            width = "full",
+        },
+        {
+            type = "checkbox",
+            name = L("DE_SETTINGS_SHOW_MINIMAL_TOGGLE_BUTTON"),
+            tooltip = L("DE_SETTINGS_SHOW_MINIMAL_TOGGLE_BUTTON_TT"),
+            default = self.defaults.showMinimalToggleButton,
+            getFunc = function() return self.sv.showMinimalToggleButton end,
+            setFunc = function(value)
+                self.sv.showMinimalToggleButton = value
                 self:ApplyLockState()
             end,
             disabled = DisabledWhenOff,
@@ -549,7 +588,6 @@ function DE:CreateSettings()
             tooltip = L("DE_SETTINGS_CHEST_CENTER_TT"),
             func = function()
                 self:ResetChestAlertPosition()
-                self:RefreshSettingsPanel()
             end,
             disabled = ChestWindowDisabled,
             width = "half",
@@ -627,7 +665,6 @@ function DE:CreateSettings()
             setFunc = function(value)
                 if not self:SetRespawnTimerOverrideFromText(config, fieldName, value) then
                     self:Print(self:T("DE_SETTINGS_RESPAWN_INVALID_TIME", tostring(value or "")))
-                    self:RefreshSettingsPanel()
                 end
             end,
             disabled = DisabledWhenOff,
@@ -692,7 +729,6 @@ function DE:CreateSettings()
             tooltip = L("DE_SETTINGS_RESET_STATUS_POS_TT"),
             func = function()
                 self:ResetWindowPosition()
-                self:RefreshSettingsPanel()
             end,
             disabled = DisabledWhenOff,
             width = "half",
@@ -703,7 +739,6 @@ function DE:CreateSettings()
             tooltip = L("DE_SETTINGS_RESET_CHEST_POS_TT"),
             func = function()
                 self:ResetChestAlertPosition()
-                self:RefreshSettingsPanel()
             end,
             disabled = DisabledWhenOff,
             width = "half",
@@ -714,7 +749,6 @@ function DE:CreateSettings()
             tooltip = L("DE_SETTINGS_RESET_STATUS_STYLE_TT"),
             func = function()
                 self:ResetStatusWindowAppearance()
-                self:RefreshSettingsPanel()
             end,
             disabled = DisabledWhenOff,
             width = "half",
@@ -725,7 +759,6 @@ function DE:CreateSettings()
             tooltip = L("DE_SETTINGS_RESET_CHEST_STYLE_TT"),
             func = function()
                 self:ResetChestAlertAppearance()
-                self:RefreshSettingsPanel()
             end,
             disabled = DisabledWhenOff,
             width = "half",

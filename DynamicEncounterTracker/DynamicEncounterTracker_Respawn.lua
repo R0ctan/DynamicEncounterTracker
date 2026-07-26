@@ -139,7 +139,6 @@ function DE:SetRespawnTimerOverride(config, fieldName, seconds)
 
     self.sv.respawnTimerOverrides[key] = override
     self:RecalculateActiveCooldown()
-    self:RefreshSettingsPanel()
     return true
 end
 
@@ -154,7 +153,6 @@ end
 function DE:ResetRespawnTimerOverrides()
     self.sv.respawnTimerOverrides = {}
     self:RecalculateActiveCooldown()
-    self:RefreshSettingsPanel()
 end
 
 function DE:RecalculateActiveCooldown()

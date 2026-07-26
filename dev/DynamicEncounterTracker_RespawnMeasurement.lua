@@ -387,8 +387,6 @@ function DE:SetRespawnMeasurementEnabled(enabled)
             "measurement enabled while encounter active"
         )
     end
-
-    self:RefreshSettingsPanel()
 end
 
 function RespawnMeasurement:Initialize()

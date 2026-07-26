@@ -489,7 +489,6 @@ function DE:SetEnabled(enabled)
     else
         self:DisableRuntime()
     end
-    self:RefreshSettingsPanel()
 end
 
 function DE:SetDebugEnabled(enabled)
@@ -505,7 +504,6 @@ function DE:SetDebugEnabled(enabled)
     end
 
     self:RefreshUI()
-    self:RefreshSettingsPanel()
 end
 
 function DE:HandleSlashCommand(text)
@@ -513,6 +511,7 @@ function DE:HandleSlashCommand(text)
 
     if command == "on" then
         self:SetEnabled(true)
+        self:RefreshSettingsPanel()
         self:Print(self:T("DE_SLASH_ENABLED"))
         return
     end
@@ -523,6 +522,7 @@ function DE:HandleSlashCommand(text)
 
     if command == "off" then
         self:SetEnabled(false)
+        self:RefreshSettingsPanel()
         self:Print(self:T("DE_SLASH_DISABLED"))
     elseif command == "show" then
         self.sv.showWindow = true
