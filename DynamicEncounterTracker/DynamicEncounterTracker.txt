@@ -2,8 +2,8 @@
 ## Description: Tracks configured Dynamic Encounters and chest eligibility in Stonefalls, Glenumbra, and Auridon.
 ## Author: R0ctan
 ## Credits: AI-assisted development by Auralith AI
-## Version: 1.0.11
-## AddOnVersion: 10011
+## Version: 1.1.0
+## AddOnVersion: 10100
 ## APIVersion: 101050 101051
 ## DependsOn: LibAddonMenu-2.0>=43
 ## SavedVariables: DynamicEncounterTracker_Data

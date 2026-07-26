@@ -8,6 +8,8 @@ Dynamic Encounter Tracker is an ESO addon by R0ctan that tracks configured Dynam
 - Shows the localized encounter and step text supplied by ESO
 - Displays the known step position, current objective progress, and remembered participation state
 - Wraps long localized section and hint text and adjusts the status-window height dynamically
+- Optional minimal mode shows a compact single-line status (plus a second line once participation is confirmed), with width and height that adjust to the current text
+- Close button and minimal-mode toggle button can each be shown or hidden independently
 - Shows chest notifications only for explicit encounter-specific rules
 - Provides a separate movable and customizable chest alert window
 - Shows a per-encounter cooldown, spawn window and overdue counter after a detected event end
@@ -101,7 +103,7 @@ Production and development ZIP variants:
 Release preparation:
 
 ```powershell
-.\tools\release.ps1 -Version 1.0.0
+.\tools\release.ps1 -Version 1.1.0
 ```
 
 ## Author
